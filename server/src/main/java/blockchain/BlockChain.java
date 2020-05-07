@@ -1,5 +1,6 @@
 package blockchain;
 
+import account.Wallet;
 import block.Block;
 import java.util.HashMap;
 
@@ -17,4 +18,5 @@ public class BlockChain {
     }
 
     private HashMap<Integer, Block> blocks; //можно в бд запихать, тот же h2
+    private HashMap<Integer, Wallet> accounts; //можно в бд запихать, тот же h2
 }
