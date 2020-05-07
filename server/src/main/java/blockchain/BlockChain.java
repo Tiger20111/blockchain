@@ -1,7 +1,6 @@
 package blockchain;
 
 import block.Block;
-
 import java.util.HashMap;
 
 public class BlockChain {
