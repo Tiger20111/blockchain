@@ -12,5 +12,9 @@ public class BlockChain {
         blocks.put(block.getId(), block);
     }
 
-    private HashMap<Integer, Block> blocks;
+    public Block getBlock(Integer id) {
+        return blocks.get(id);
+    }
+
+    private HashMap<Integer, Block> blocks; //можно в бд запихать, тот же h2
 }
