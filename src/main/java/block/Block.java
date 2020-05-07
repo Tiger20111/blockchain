@@ -6,15 +6,16 @@ import java.util.Date;
 
 public class Block {
 
+    private Integer id;
     private String hash;
-    private String previousHash;
+    private Integer previousId;
     private String data;
     private long timeStamp;
 
     //Block Constructor.
-    public Block(String data,String previousHash ) {
+    public Block(String data, Integer previousId ) {
         this.data = data;
-        this.previousHash = previousHash;
+        this.previousId = previousId;
         this.timeStamp = new Date().getTime();
         this.hash = calculateHash();
     }
@@ -29,10 +30,14 @@ public class Block {
 
     private String calculateHash() {
         return Sha256.getHash(
-                previousHash +
+                previousId +
                         Long.toString(timeStamp) +
                         data
         );
+    }
+
+    public Integer getId() {
+        return id;
     }
 
 
