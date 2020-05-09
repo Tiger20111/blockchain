@@ -33,6 +33,9 @@ public class ControllerClient {
 
     @RequestMapping(value = "/account/balance/{name}", method = GET)
     public Double moneyTransfer(@PathVariable("name") String name) throws Exception {
+        if (!setUrls) {
+            service.setUrlServer(urlServer);
+        }
         return service.getBalance(name);
     }
 

@@ -30,6 +30,7 @@ public class Wallet {
     }
 
     PublicKey decodeKeyFromString(String publicKeyStr) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+        publicKeyStr = publicKeyStr.replace('$', '/');
         KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
         Base64.Decoder decoder = Base64.getDecoder();
 

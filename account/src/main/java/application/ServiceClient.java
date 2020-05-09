@@ -78,7 +78,8 @@ public class ServiceClient {
 
     private String encodePublicKey(PublicKey publicKey) {
         Base64.Encoder encoder = Base64.getEncoder();
-        return encoder.encodeToString(publicKey.getEncoded());
+        String keyPub = encoder.encodeToString(publicKey.getEncoded());
+        return keyPub.replace('/', '$');
     }
 
     private String getUrl(String url) throws IOException {
