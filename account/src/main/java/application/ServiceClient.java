@@ -4,6 +4,11 @@ import application.acc.Account;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.Security;
 import java.util.HashMap;
 
@@ -24,11 +29,32 @@ public class ServiceClient {
         }
         Account account = new Account(name);
         accounts.put(name, account);
+        postCreateAccount(name, account.getPublicKey().toString());
         return "Account created";
+    }
+
+    private void postCreateAccount(String name, String publicKey) {
+        String request = urlServer + "account/new/" + name + "/" + publicKey;
+
+        try {
+            getUrl(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     Integer getNumAccounts() {
         return accounts.size();
+    }
+
+    String transferMoney(String from, String to, Double amount) {
+        return "Complete";
+    }
+
+    Double getBalance(String name) throws IOException {
+        String request = urlServer + "account/balance/" + name;
+        String textResponse = getUrl(request);
+        return Double.parseDouble(textResponse);
     }
 
     String getNamesAccounts() {
@@ -44,5 +70,34 @@ public class ServiceClient {
         return names.toString();
     }
 
+    void setUrlServer(String urlServer) {
+        this.urlServer = urlServer;
+    }
+
+    private String getUrl(String url) throws IOException {
+        StringBuffer response = null;
+        try {
+
+            URL obj = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+
+            connection.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException("wrong address: " + url);
+        }
+        return response.toString();
+    }
+
     private HashMap<String, Account> accounts;
+    private String urlServer;
 }

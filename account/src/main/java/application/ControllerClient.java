@@ -14,6 +14,7 @@ public class ControllerClient {
 
     ControllerClient() {
         this.service = new ServiceClient();
+        service.setUrlServer(urlServer);
     }
 
     @RequestMapping(value = "/account/new/{name}", method = GET)
@@ -24,13 +25,13 @@ public class ControllerClient {
     @RequestMapping(value = "/transaction/money_transfer/{from}/{to}/{amount}", method = GET)
     public String moneyTransfer(@PathVariable("from") String from,
                                 @PathVariable("to") String to,
-                                @PathVariable("amount") String amount) throws Exception {
-        return "";
+                                @PathVariable("amount") Double amount) throws Exception {
+        return service.transferMoney(from, to, amount);
     }
 
     @RequestMapping(value = "/account/balance/{name}", method = GET)
-    public String moneyTransfer(@PathVariable("name") String name) throws Exception {
-        return "";
+    public Double moneyTransfer(@PathVariable("name") String name) throws Exception {
+        return service.getBalance(name);
     }
 
     @RequestMapping(value = "status", method = GET)

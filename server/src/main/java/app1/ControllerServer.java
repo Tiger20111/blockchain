@@ -10,8 +10,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class ControllerServer {
 
     @RequestMapping(value = "/account/new/{name}/{key}", method = GET)
-    public String createNewAccount(@PathVariable("name") String login,
+    public String createNewAccount(@PathVariable("name") String name,
                                    @PathVariable("key") String key) throws Exception {
+        return "";
+    }
+
+    @RequestMapping(value = "/account/balance/{name}", method = GET)
+    public String getBalance(@PathVariable("name") String name) throws Exception {
         return "";
     }
 
