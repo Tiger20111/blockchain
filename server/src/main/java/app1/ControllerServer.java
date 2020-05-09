@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-public class Controller {
+public class ControllerServer {
 
     @RequestMapping(value = "/account/new/{name}/{key}", method = GET)
     public String createNewAccount(@PathVariable("name") String login,
