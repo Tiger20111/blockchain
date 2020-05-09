@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.PublicKey;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -19,6 +20,7 @@ import java.util.HashMap;
 public class ServiceClient {
     ServiceClient() {
     accounts = new HashMap<>();
+    banks = new ArrayList<>();
     }
 
     static {
@@ -53,6 +55,29 @@ public class ServiceClient {
         return "Complete";
     }
 
+    String createBank(String bank) throws IOException {
+        if (banks.contains(bank)) {
+            return "Already exist";
+        }
+
+        banks.add(bank);
+        String request = urlServer + "bank/new/" + bank;
+        return getUrl(request);
+    }
+
+    String getBankNames() {
+        StringBuilder names = new StringBuilder();
+        int num = 0;
+        for (String name : banks) {
+            if (num != 0) {
+                names.append(", ");
+            }
+            names.append(name);
+            num++;
+        }
+        return names.toString();
+    }
+
     Double getBalance(String name) throws IOException {
         String request = urlServer + "account/balance/" + name;
         String textResponse = getUrl(request);
@@ -74,6 +99,11 @@ public class ServiceClient {
 
     void setUrlServer(String urlServer) {
         this.urlServer = urlServer;
+    }
+
+    String replenishmentAccount(String bank, String wallet, Double amount) throws IOException {
+        String request = urlServer + "/transaction/replenishment/" + bank + "/" + wallet + "/" + amount;
+        return getUrl(request);
     }
 
     private String encodePublicKey(PublicKey publicKey) {
@@ -108,4 +138,5 @@ public class ServiceClient {
 
     private HashMap<String, Account> accounts;
     private String urlServer;
+    private ArrayList<String> banks;
 }
