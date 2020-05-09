@@ -19,8 +19,8 @@ public class ControllerServer {
     }
 
     @RequestMapping(value = "/account/balance/{name}", method = GET)
-    public String getBalance(@PathVariable("name") String name) throws Exception {
-        return "";
+    public Double getBalance(@PathVariable("name") String name) throws Exception {
+        return service.getBalance(name);
     }
 
     @RequestMapping(value = "/transaction/money_transfer/{from}/{to}/{amount}/{digital}", method = GET)

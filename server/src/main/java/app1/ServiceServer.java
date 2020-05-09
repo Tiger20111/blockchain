@@ -26,5 +26,12 @@ public class ServiceServer {
         return "Created";
     }
 
+    Double getBalance(String name) {
+        if (!wallets.containsKey(name)) {
+            return -1.0;
+        }
+        return wallets.get(name).getBalance();
+    }
+
     private HashMap<String, Wallet> wallets;
 }
