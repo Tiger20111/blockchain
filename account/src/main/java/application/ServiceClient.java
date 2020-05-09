@@ -1,12 +1,11 @@
 package application;
 
 import application.acc.Account;
+import application.transaction.Transaction;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.PublicKey;
@@ -51,19 +50,20 @@ public class ServiceClient {
         return accounts.size();
     }
 
-    String transferMoney(String from, String to, Double amount) {
+    String transferMoney(String from, String to, Double amount) throws IOException {
+        Transaction transaction = new Transaction(from, to, "", amount);
+        String transactionStr = encodeTransaction(transaction);
         return "Complete";
     }
 
-    String createBank(String bank) throws IOException {
-        if (banks.contains(bank)) {
-            return "Already exist";
-        }
-
-        banks.add(bank);
-        String request = urlServer + "bank/new/" + bank;
-        return getUrl(request);
+    String encodeTransaction(Transaction transaction) throws IOException {
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        ObjectOutputStream so = new ObjectOutputStream(bo);
+        so.writeObject(transaction);
+        so.flush();
+        return bo.toString();
     }
+
 
     String getBankNames() {
         StringBuilder names = new StringBuilder();
@@ -101,10 +101,6 @@ public class ServiceClient {
         this.urlServer = urlServer;
     }
 
-    String replenishmentAccount(String bank, String wallet, Double amount) throws IOException {
-        String request = urlServer + "/transaction/replenishment/" + bank + "/" + wallet + "/" + amount;
-        return getUrl(request);
-    }
 
     private String encodePublicKey(PublicKey publicKey) {
         Base64.Encoder encoder = Base64.getEncoder();

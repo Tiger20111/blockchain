@@ -46,33 +46,29 @@ public class ControllerClient {
 
     @RequestMapping(value = "accounts/names", method = GET)
     public String getNamesAccounts() {
+        if (!setUrls) {
+         return "No accounts";
+        }
         return service.getNamesAccounts();
     }
 
     @RequestMapping(value = "accounts/number", method = GET)
     public Integer getNumAccounts() {
+        if (!setUrls) {
+            return -1;
+        }
         return service.getNumAccounts();
     }
 
-    @RequestMapping(value = "/banks/new/{name}", method = GET)
-    public String createBank(@PathVariable("name") String name) throws Exception {
-        if (!setUrls) {
-            service.setUrlServer(urlServer);
-        }
-        return service.createBank(name);
-    }
 
     @RequestMapping(value = "/banks/names", method = GET)
     public String createBank() throws Exception {
+        if (!setUrls) {
+            service.setUrlServer(urlServer);
+        }
         return service.getBankNames();
     }
 
-    @RequestMapping(value = "/banks/replenishment/{from}/{to}/{amount}", method = GET)
-    public String replenishmentAccount(@PathVariable("from") String from,
-                                @PathVariable("to") String to,
-                                @PathVariable("amount") Double amount) throws Exception {
-        return service.replenishmentAccount(from, to, amount);
-    }
 
     private final ServiceClient service;
     private boolean setUrls = false;

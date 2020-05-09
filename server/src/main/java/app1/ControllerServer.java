@@ -28,12 +28,9 @@ public class ControllerServer {
         return service.createNewBank(name);
     }
 
-    @RequestMapping(value = "/transaction/money_transfer/{from}/{to}/{amount}/{digital}", method = GET)
-    public String moneyTransfer(@PathVariable("from") String from,
-                                @PathVariable("to") String to,
-                                @PathVariable("amount") String amount,
-                                @PathVariable("digital") String digital) throws Exception {
-        return "";
+    @RequestMapping(value = "/transaction/{transaction}", method = GET)
+    public String moneyTransfer(@PathVariable("transaction") String transaction) throws Exception {
+        return service.pushTransaction(transaction);
     }
 
     @RequestMapping(value = "/transaction/replenishment/{bank}/{to}/{amount}", method = GET)
@@ -41,6 +38,11 @@ public class ControllerServer {
                                 @PathVariable("to") String wallet,
                                 @PathVariable("amount") String amount) throws Exception {
         return service.replenishmentAccount(bank, wallet, Double.parseDouble(amount));
+    }
+
+    @RequestMapping(value = "/miner/mine", method = GET)
+    public void mineBlock() throws Exception {
+
     }
 
     @RequestMapping(value = "status", method = GET)

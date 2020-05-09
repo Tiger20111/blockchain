@@ -16,8 +16,11 @@
   4. http://localhost:8082/accounts/number - Вывести кол-во пользователей
   5. http://localhost:8082/account/balance/{name} - Вывести баланс пользователя
   6. http://localhost:8082/transaction/money_transfer/{from}/{to}/{amount} - Сделать перевод от пользователя {from} пользователю {to} на сумму {amount}
+  7. http://localhost:8082/banks/names - вывести имена банков
    
     Команды для банка:
-  1. http://localhost:8082/banks/new/{name} - Создать новый аккаунт для банка
-  2. http://localhost:8082/banks/names - вывести имена банков
-  3. http://localhost:8082/banks/replenishment/{from}/{to}/{amount} - поплнение счета банком
+  1. http://localhost:8083/bank/new/{name} - Создать новый аккаунт для банка
+  2. http://localhost:8083/transaction/replenishment/{bank}/{to}/{amount} - поплнение счета банком
+  
+    Команды для Майнера
+  1. http://localhost:8083/miner/mine - Смайнить транзакции в блок из списка ожидающих

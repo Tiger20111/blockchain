@@ -4,7 +4,11 @@ import account.Wallet;
 import banks.Bank;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
+import transaction.Transaction;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
@@ -34,6 +38,19 @@ public class ServiceServer {
         return "Created";
     }
 
+    String pushTransaction(String transactionStr) throws IOException, ClassNotFoundException {
+        Transaction transaction = decodeTransaction(transactionStr);
+        pendingTransaction.put(transaction.getSender(), transaction);
+        return "transaction pushed";
+    }
+
+    private Transaction decodeTransaction(String transactionStr) throws IOException, ClassNotFoundException {
+        byte[] b = transactionStr.getBytes();
+        ByteArrayInputStream bi = new ByteArrayInputStream(b);
+        ObjectInputStream si = new ObjectInputStream(bi);
+        return (Transaction) si.readObject();
+    }
+
     Double getBalance(String name) {
         if (!wallets.containsKey(name)) {
             return -1.0;
@@ -41,9 +58,6 @@ public class ServiceServer {
         return wallets.get(name).getBalance();
     }
 
-    String transferMoney(String from, String to, String amount, String digital) {
-        return "Complete";
-    }
 
     String replenishmentAccount(String bank, String to, Double amount) {
         return "Complete";
@@ -51,4 +65,7 @@ public class ServiceServer {
 
     private HashMap<String, Wallet> wallets;
     private HashMap<String, Bank> banks;
+    private HashMap<String, Transaction> finishedTransaction;
+    private HashMap<String, Transaction> pendingTransaction;
+    private HashMap<String, Transaction> rejectedTransaction;
 }

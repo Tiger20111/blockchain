@@ -1,6 +1,6 @@
-package transaction;
+package application.transaction;
 
-import encoder.Sha256;
+import application.encoder.Sha256;
 
 public class Transaction {
     public Transaction(String from, String to, String digitalSignature, Double value) {
@@ -45,4 +45,3 @@ public class Transaction {
     private String recipient;
     private Double value;
 }
-
