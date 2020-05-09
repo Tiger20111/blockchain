@@ -8,11 +8,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 public class ControllerServer {
+    ControllerServer() {
+        this.service = new ServiceServer();
+    }
 
     @RequestMapping(value = "/account/new/{name}/{key}", method = GET)
     public String createNewAccount(@PathVariable("name") String name,
                                    @PathVariable("key") String key) throws Exception {
-        return "";
+        return service.createNewWallet(name, key);
     }
 
     @RequestMapping(value = "/account/balance/{name}", method = GET)
@@ -39,4 +42,6 @@ public class ControllerServer {
     public String status() {
         return "Work";
     }
+
+    private final ServiceServer service;
 }

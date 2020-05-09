@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.PublicKey;
 import java.security.Security;
+import java.util.Base64;
 import java.util.HashMap;
 
 
@@ -29,12 +31,12 @@ public class ServiceClient {
         }
         Account account = new Account(name);
         accounts.put(name, account);
-        postCreateAccount(name, account.getPublicKey().toString());
+        postCreateAccount(name, account.getPublicKey());
         return "Account created";
     }
 
-    private void postCreateAccount(String name, String publicKey) {
-        String request = urlServer + "account/new/" + name + "/" + publicKey;
+    private void postCreateAccount(String name, PublicKey publicKey) {
+        String request = urlServer + "account/new/" + name + "/" + encodePublicKey(publicKey);
 
         try {
             getUrl(request);
@@ -74,8 +76,13 @@ public class ServiceClient {
         this.urlServer = urlServer;
     }
 
+    private String encodePublicKey(PublicKey publicKey) {
+        Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encodeToString(publicKey.getEncoded());
+    }
+
     private String getUrl(String url) throws IOException {
-        StringBuffer response = null;
+        StringBuffer response;
         try {
 
             URL obj = new URL(url);
