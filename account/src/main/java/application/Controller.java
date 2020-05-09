@@ -23,4 +23,8 @@ public class Controller {
                                 @PathVariable("amount") String amount) throws Exception {
         return "";
     }
+    @RequestMapping(value = "status", method = GET)
+    public String status() {
+        return "Work";
+    }
 }
