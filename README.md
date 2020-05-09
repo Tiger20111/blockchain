@@ -5,7 +5,9 @@
   
   
     Запуск:
-  docker-compose up
+  1) запустить мавеновский плагин package для account
+  2) запустить мавеновский плагин package для server   
+  3) docker-compose up
   
     Команды пользователя:
   1. http://localhost:8082/status - проверка того, что клиент смог подняться  

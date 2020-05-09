@@ -33,5 +33,9 @@ public class ServiceServer {
         return wallets.get(name).getBalance();
     }
 
+    String transferMoney(String from, String to, String amount, String digital) {
+        return "Complete";
+    }
+
     private HashMap<String, Wallet> wallets;
 }
