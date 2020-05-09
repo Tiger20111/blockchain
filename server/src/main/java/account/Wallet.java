@@ -6,8 +6,9 @@ import java.security.spec.ECGenParameterSpec;
 
 public class Wallet {
 
-    public Wallet() {
+    public Wallet(Integer balance) {
         generateKeyPair();
+        this.balance = balance;
     }
 
     public void generateKeyPair() {
@@ -30,4 +31,5 @@ public class Wallet {
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private Integer id;
+    private Integer balance;
 }

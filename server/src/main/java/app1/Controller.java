@@ -23,11 +23,10 @@ public class Controller {
         return "";
     }
 
-    @RequestMapping(value = "/transaction/replenishment/{bank}/{to}/{amount}/{digital}", method = GET)
+    @RequestMapping(value = "/transaction/replenishment/{bank}/{to}/{amount}", method = GET)
     public String replenishmentCash(@PathVariable("bank") String from,
                                 @PathVariable("to") String to,
-                                @PathVariable("amount") String amount,
-                                @PathVariable("digital") String digital) throws Exception {
+                                @PathVariable("amount") String amount) throws Exception {
         return "";
     }
 }
