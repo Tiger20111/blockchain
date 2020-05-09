@@ -9,6 +9,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
   server:
     container_name: server
     image: server
@@ -18,3 +21,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8083:8083"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16

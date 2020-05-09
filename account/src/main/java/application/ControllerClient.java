@@ -14,11 +14,13 @@ public class ControllerClient {
 
     ControllerClient() {
         this.service = new ServiceClient();
-        service.setUrlServer(urlServer);
     }
 
     @RequestMapping(value = "/account/new/{name}", method = GET)
     public String createNewAccount(@PathVariable("name") String name) throws Exception {
+        if (!setUrls) {
+            service.setUrlServer(urlServer);
+        }
         return service.addAccount(name);
     }
 
@@ -50,4 +52,5 @@ public class ControllerClient {
     }
 
     private final ServiceClient service;
+    private boolean setUrls = false;
 }
