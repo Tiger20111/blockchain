@@ -21,9 +21,12 @@ public class ServiceServer {
     ServiceServer(){
         wallets = new HashMap<>();
         banks = new HashMap<>();
-        pendingTransaction = new HashMap<>();
-        finishedTransaction = new HashMap<>();
-        rejectedTransaction = new HashMap<>();
+        pendingTransactionsUser = new HashMap<>();
+        finishedTransactionsUser = new HashMap<>();
+        rejectedTransactionsUser = new HashMap<>();
+        pendingTransactionsBank = new HashMap<>();
+        finishedTransactionsBank = new HashMap<>();
+        rejectedTransactionsBank = new HashMap<>();
         blocks = new HashMap<>();
     }
 
@@ -38,32 +41,82 @@ public class ServiceServer {
     }
 
     String miniBlock() {
-        ArrayList<Transaction> validTransaction = new ArrayList<>();
-        ArrayList<Integer> invalidIdTransactions = new ArrayList<>();
-        if (pendingTransaction.isEmpty()) {
-            return "Nothing to mine";
+        ArrayList<Transaction> validTransactionUser = getValidUserTransaction();
+        ArrayList<Transaction> validTransactionBank = getValidBankTransaction();
+        ArrayList<Transaction> validTransaction;
+        if (validTransactionUser != null) {
+            validTransaction = new ArrayList<>(validTransactionUser);
+        } else {
+            validTransaction = new ArrayList<>();
         }
-        Set<Map.Entry<Integer,Transaction>> setTransaction = pendingTransaction.entrySet();
-        for (Map.Entry<Integer,Transaction> entry : setTransaction) {
-            boolean valid = SmartContract.validTransaction(wallets, entry.getValue());
-            if (valid) {
-                validTransaction.add(entry.getValue());
-            } else {
-                invalidIdTransactions.add(entry.getKey());
-                rejectedTransaction.put(entry.getKey(), entry.getValue());
-            }
-        }
-        for (Integer id : invalidIdTransactions) {
-            pendingTransaction.remove(id);
+        if (validTransactionBank != null) {
+            validTransaction.addAll(validTransactionBank);
         }
 
-        SmartContract.executeTransaction(wallets, validTransaction);
 
+        if (validTransaction.isEmpty()) {
+            return "No valid transaction to mine";
+        }
+
+        if (validTransactionUser != null && !validTransactionUser.isEmpty()) {
+            SmartContract.executeTransactionUser(wallets, validTransactionUser);
+        }
+        if (validTransactionBank != null && !validTransactionBank.isEmpty()) {
+            SmartContract.executeTransactionBank(banks, wallets, validTransactionBank);
+        }
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
         int previousId = 0;
         Block block = new Block(timeStamp, previousId, validTransaction);
         blocks.put(block.getId(), block);
         return "Compete";
+    }
+
+
+
+    private ArrayList<Transaction> getValidUserTransaction() {
+        System.out.println("Start validation user transactions");
+        ArrayList<Transaction> validTransaction = new ArrayList<>();
+        ArrayList<Integer> invalidIdTransactions = new ArrayList<>();
+        if (pendingTransactionsUser.isEmpty()) {
+            return null;
+        }
+        Set<Map.Entry<Integer,Transaction>> setTransaction = pendingTransactionsUser.entrySet();
+        for (Map.Entry<Integer,Transaction> entry : setTransaction) {
+            boolean valid = SmartContract.validTransactionUser(wallets, entry.getValue());
+            if (valid) {
+                validTransaction.add(entry.getValue());
+            } else {
+                invalidIdTransactions.add(entry.getKey());
+                rejectedTransactionsUser.put(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Integer id : invalidIdTransactions) {
+            pendingTransactionsUser.remove(id);
+        }
+        return validTransaction;
+    }
+
+    private ArrayList<Transaction> getValidBankTransaction() {
+        System.out.println("Start validation bank transactions");
+        ArrayList<Transaction> validTransaction = new ArrayList<>();
+        ArrayList<Integer> invalidIdTransactions = new ArrayList<>();
+        if (pendingTransactionsBank.isEmpty()) {
+            return null;
+        }
+        Set<Map.Entry<Integer,Transaction>> setTransaction = pendingTransactionsBank.entrySet();
+        for (Map.Entry<Integer,Transaction> entry : setTransaction) {
+            boolean valid = SmartContract.validTransactionBank(banks, wallets, entry.getValue());
+            if (valid) {
+                validTransaction.add(entry.getValue());
+            } else {
+                invalidIdTransactions.add(entry.getKey());
+                rejectedTransactionsBank.put(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Integer id : invalidIdTransactions) {
+            pendingTransactionsBank.remove(id);
+        }
+        return validTransaction;
     }
 
     String createNewBank(String name) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
@@ -75,7 +128,7 @@ public class ServiceServer {
     String pushTransaction(String transactionStr) throws IOException, ClassNotFoundException {
         Transaction transaction = decodeTransaction( transactionStr );
         System.out.println("Transaction: " + transactionStr + " was pushed");
-        pendingTransaction.put(transaction.getTransactionId(), transaction);
+        pendingTransactionsUser.put(transaction.getTransactionId(), transaction);
         return "transaction pushed";
     }
 
@@ -141,13 +194,18 @@ public class ServiceServer {
 
 
     String replenishmentAccount(String bank, String to, Double amount) {
+        Transaction transaction = new Transaction(bank, to, "", amount);
+        pendingTransactionsBank.put(transaction.getTransactionId(), transaction);
         return "Complete";
     }
 
     private HashMap<String, Wallet> wallets;
     private HashMap<String, Bank> banks;
-    private HashMap<Integer, Transaction> finishedTransaction;
-    private HashMap<Integer, Transaction> pendingTransaction;
-    private HashMap<Integer, Transaction> rejectedTransaction;
+    private HashMap<Integer, Transaction> finishedTransactionsUser;
+    private HashMap<Integer, Transaction> pendingTransactionsUser;
+    private HashMap<Integer, Transaction> rejectedTransactionsUser;
+    private HashMap<Integer, Transaction> pendingTransactionsBank;
+    private HashMap<Integer, Transaction> finishedTransactionsBank;
+    private HashMap<Integer, Transaction> rejectedTransactionsBank;
     private HashMap<Integer, Block> blocks;
 }

@@ -1,13 +1,14 @@
 package validation;
 
 import account.Wallet;
+import banks.Bank;
 import transaction.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SmartContract {
-    public static boolean validTransaction(HashMap<String, Wallet> wallets, Transaction transaction) {
+    public static boolean validTransactionUser(HashMap<String, Wallet> wallets, Transaction transaction) {
         if (!wallets.containsKey(transaction.getRecipient()) && !wallets.containsKey(transaction.getSender())) {
             System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
             return false;
@@ -20,13 +21,25 @@ public class SmartContract {
         return true;
     }
 
-    public static boolean executeTransaction(HashMap<String, Wallet> wallets, ArrayList<Transaction> validTransaction) {
+    public static boolean executeTransactionUser(HashMap<String, Wallet> wallets, ArrayList<Transaction> validTransaction) {
         for (Transaction transaction : validTransaction) {
             Wallet from = wallets.get(transaction.getSender());
             Wallet to = wallets.get(transaction.getRecipient());
             from.writeOff(transaction.getValue());
             to.replenishment(transaction.getValue());
         }
+        return true;
+    }
+
+    public static boolean validTransactionBank(HashMap<String, Bank> banks,
+                                               HashMap<String, Wallet> wallets,
+                                               Transaction transaction) {
+        return true;
+    }
+
+    public static boolean executeTransactionBank(HashMap<String, Bank> banks,
+                                                 HashMap<String, Wallet> wallets,
+                                                 ArrayList<Transaction> transaction) {
         return true;
     }
 }
