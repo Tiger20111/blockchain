@@ -14,7 +14,7 @@ public class Block {
         this.data = data;
         this.previousId = previousId;
         this.timeStamp = new Date().getTime();
-        this.difficulty = 5;
+        this.difficulty = 100;
         this.transactions = transactions;
         this.hash = calculateHash();
         mineBlock();
@@ -28,7 +28,7 @@ public class Block {
                         data +
                         id +
                         nonce +
-                        transactions.size()
+                        Utils.getStringTransactions(transactions)
         );
     }
 
@@ -66,7 +66,7 @@ public class Block {
     private Integer previousId;
     private String data;
     private long timeStamp;
-    private int nonce;
+    private int nonce = 0;
     private int difficulty;
     ArrayList<Transaction> transactions;
 }

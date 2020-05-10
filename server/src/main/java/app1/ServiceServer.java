@@ -141,6 +141,8 @@ public class ServiceServer {
         String digitalSignature = "";
         String sender = "";
         String recipient = "";
+        String hash = "";
+        Integer nonce = 0;
         double value = 0.0;
         for (String pair : pairs) {
             String[] keyValue = pair.split("=");
@@ -166,11 +168,15 @@ public class ServiceServer {
                 case "value":
                     value = Double.parseDouble(valueS);
                     break;
+                case "hash":
+                    hash = valueS;
+                case "nonce":
+                    nonce = Integer.parseInt(valueS);
                 default:
                     throw new RuntimeException("Error key: " + key);
             }
         }
-        return new Transaction(transactionId, sender, recipient, digitalSignature, value);
+        return new Transaction(transactionId, sender, recipient, digitalSignature, value, hash, nonce);
     }
 
     String getBankNames() {
