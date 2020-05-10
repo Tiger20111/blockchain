@@ -14,7 +14,7 @@ public class Block {
         this.data = data;
         this.previousId = previousId;
         this.timeStamp = new Date().getTime();
-        this.difficulty = 100;
+        this.difficulty = 5;
         this.transactions = transactions;
         this.hash = calculateHash();
         mineBlock();

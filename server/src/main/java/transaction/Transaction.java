@@ -14,18 +14,20 @@ public class Transaction implements Serializable {
         this.digitalSignature = digitalSignature;
         Random random = new Random();
         this.transactionId = random.nextInt(10000);
-        this.hash = calculateHash();
+        this.hashN = calculateHash();
+        this.hash = hashN;
         mineTransaction();
     }
 
-    public Transaction(Integer transactionId, String from, String to, String digitalSignature, Double value, String hash, Integer nonce) {
+    public Transaction(Integer transactionId, String from, String to, String digitalSignature, Double value, String hashN, Integer nonce, String hash) {
         this.transactionId = transactionId;
         this.sender = from;
         this.recipient = to;
         this.value = value;
         this.digitalSignature = digitalSignature;
-        this.hash = hash;
+        this.hashN = hashN;
         this.nonce = nonce;
+        this.hash = hash;
     }
 
     private String calculateHash() {
@@ -74,6 +76,10 @@ public class Transaction implements Serializable {
         return nonce;
     }
 
+    public String getHashN() {
+        return hashN;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -85,11 +91,11 @@ public class Transaction implements Serializable {
     public void mineTransaction() {
         System.out.println("Start mine Transaction");
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
-        while(!hash.substring( 0, difficulty).equals(target)) {
-            nonce ++;
-            hash = calculateHash();
+        while (!hashN.substring(0, difficulty).equals(target)) {
+            nonce++;
+            hashN = calculateHash();
         }
-        System.out.println("Transaction Mined!!! : " + hash + " nonce: " + nonce);
+        System.out.println("Transaction Mined!!! : " + hashN + " nonce: " + nonce);
     }
 
     private Integer transactionId = 0;
@@ -97,6 +103,7 @@ public class Transaction implements Serializable {
     private String sender;
     private String recipient;
     private Double value;
+    private String hashN;
     private String hash;
     private Integer nonce = 0;
     private Integer difficulty = 5;
@@ -107,9 +114,10 @@ public class Transaction implements Serializable {
                 "digitalSignature=" + digitalSignature + "-" +
                 "sender=" + sender + "-" +
                 "recipient=" + recipient + "-" +
-                "value=" + value +
-                "hash=" + hash +
-                "nonce=" + nonce;
+                "value=" + value + "-" +
+                "hashN=" + hashN + "-" +
+                "nonce=" + nonce + "-" +
+                "hash=" + hash;
     }
 }
 

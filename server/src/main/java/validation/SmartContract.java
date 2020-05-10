@@ -10,13 +10,20 @@ import java.util.HashMap;
 public class SmartContract {
     public static boolean validTransactionUser(HashMap<String, Wallet> wallets, Transaction transaction) {
 
-        String hashTarget = new String(new char[transaction.getDifficulty()]).replace('\0', '0');
-        if(!transaction.getHash().substring( 0, transaction.getDifficulty()).equals(hashTarget)) {
-            System.out.println("This block hasn't been mined");
+        if(!transaction.getHash().equals(transaction.calculateHashNonce(0)) ){
+            System.out.println("Current Hashes not equal: \n" + "1: " + transaction.getHash() + "\n" + "2: " + transaction.calculateHashNonce(0));
+            System.out.println(transaction);
             return false;
         }
 
-        if (!wallets.containsKey(transaction.getRecipient()) && !wallets.containsKey(transaction.getSender())) {
+//        Not Work
+//        String hashTarget = new String(new char[transaction.getDifficulty()]).replace('\0', '0');
+//        if(!transaction.getHash().substring( 0, transaction.getDifficulty()).equals(hashTarget)) {
+//            System.out.println("This block hasn't been mined");
+//            return false;
+//        }
+
+        if (!wallets.containsKey(transaction.getRecipient()) || !wallets.containsKey(transaction.getSender())) {
             System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
             return false;
         }
@@ -41,7 +48,7 @@ public class SmartContract {
     public static boolean validTransactionBank(HashMap<String, Bank> banks,
                                                HashMap<String, Wallet> wallets,
                                                Transaction transaction) {
-        if (!wallets.containsKey(transaction.getRecipient()) && !banks.containsKey(transaction.getSender())) {
+        if (!wallets.containsKey(transaction.getRecipient()) || !banks.containsKey(transaction.getSender())) {
             System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
             return false;
         }
