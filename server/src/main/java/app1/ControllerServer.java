@@ -41,8 +41,8 @@ public class ControllerServer {
     }
 
     @RequestMapping(value = "/miner/mine", method = GET)
-    public void mineBlock() throws Exception {
-
+    public String mineBlock() throws Exception {
+        return service.miniBlock();
     }
 
     @RequestMapping(value = "/connection", method = GET)

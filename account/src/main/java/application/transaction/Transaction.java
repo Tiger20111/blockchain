@@ -3,6 +3,7 @@ package application.transaction;
 import application.encoder.Sha256;
 
 import java.io.Serializable;
+import java.util.Random;
 
 public class Transaction implements Serializable {
     public Transaction(String from, String to, String digitalSignature, Double value) {
@@ -10,6 +11,9 @@ public class Transaction implements Serializable {
         this.recipient = to;
         this.value = value;
         this.digitalSignature = digitalSignature;
+
+        Random random = new Random();
+        this.transactionId = random.nextInt(10000);
     }
 
     public Transaction(Integer transactionId, String from, String to, String digitalSignature, Double value) {

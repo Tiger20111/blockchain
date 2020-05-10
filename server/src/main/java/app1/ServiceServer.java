@@ -39,9 +39,12 @@ public class ServiceServer {
 
     String miniBlock() {
         ArrayList<Transaction> validTransaction = new ArrayList<>();
+        if (pendingTransaction.isEmpty()) {
+            return "Nothing to mine";
+        }
         Set<Map.Entry<Integer,Transaction>> setTransaction = pendingTransaction.entrySet();
         for (Map.Entry<Integer,Transaction> entry : setTransaction) {
-            boolean valid = SmartContract.validTransaction(entry.getValue());
+            boolean valid = SmartContract.validTransaction(wallets, entry.getValue());
             if (valid) {
                 validTransaction.add(entry.getValue());
             } else {
