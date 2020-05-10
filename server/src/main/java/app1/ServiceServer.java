@@ -2,16 +2,19 @@ package app1;
 
 import account.Wallet;
 import banks.Bank;
+import block.Block;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 import transaction.Transaction;
+import validation.SmartContract;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
-import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 public class ServiceServer {
@@ -21,6 +24,7 @@ public class ServiceServer {
         pendingTransaction = new HashMap<>();
         finishedTransaction = new HashMap<>();
         rejectedTransaction = new HashMap<>();
+        blocks = new HashMap<>();
     }
 
     static {
@@ -33,6 +37,27 @@ public class ServiceServer {
         return "Created";
     }
 
+    String miniBlock() {
+        ArrayList<Transaction> validTransaction = new ArrayList<>();
+        Set<Map.Entry<Integer,Transaction>> setTransaction = pendingTransaction.entrySet();
+        for (Map.Entry<Integer,Transaction> entry : setTransaction) {
+            boolean valid = SmartContract.validTransaction(entry.getValue());
+            if (valid) {
+                validTransaction.add(entry.getValue());
+            } else {
+                pendingTransaction.remove(entry.getKey());
+                rejectedTransaction.put(entry.getKey(), entry.getValue());
+            }
+        }
+        SmartContract.executeTransaction(wallets, validTransaction);
+
+        String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        int previousId = 0;
+        Block block = new Block(timeStamp, previousId, validTransaction);
+        blocks.put(block.getId(), block);
+        return "Compete";
+    }
+
     String createNewBank(String name) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
         Bank bank = new Bank(name, 1000000.0);
         banks.put(name, bank);
@@ -42,7 +67,7 @@ public class ServiceServer {
     String pushTransaction(String transactionStr) throws IOException, ClassNotFoundException {
         Transaction transaction = decodeTransaction( transactionStr );
         System.out.println("Transaction: " + transactionStr + " was pushed");
-        pendingTransaction.put(transaction.getSender(), transaction);
+        pendingTransaction.put(transaction.getTransactionId(), transaction);
         return "transaction pushed";
     }
 
@@ -113,7 +138,8 @@ public class ServiceServer {
 
     private HashMap<String, Wallet> wallets;
     private HashMap<String, Bank> banks;
-    private HashMap<String, Transaction> finishedTransaction;
-    private HashMap<String, Transaction> pendingTransaction;
-    private HashMap<String, Transaction> rejectedTransaction;
+    private HashMap<Integer, Transaction> finishedTransaction;
+    private HashMap<Integer, Transaction> pendingTransaction;
+    private HashMap<Integer, Transaction> rejectedTransaction;
+    private HashMap<Integer, Block> blocks;
 }

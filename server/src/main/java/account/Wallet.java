@@ -37,6 +37,13 @@ public class Wallet {
         return keyFactory.generatePublic(new X509EncodedKeySpec(decoder.decode(publicKeyStr)));
     }
 
+    public void replenishment(Double amount) {
+        this.balance += amount;
+    }
+    public void writeOff(Double amount) {
+        this.balance -= amount;
+    }
+
     private String name;
     private PublicKey publicKey;
     private Integer id;

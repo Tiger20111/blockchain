@@ -1,18 +1,21 @@
 package block;
 
 import encoder.Sha256;
+import transaction.Transaction;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Block {
 
     //Block Constructor.
-    public Block(String data, Integer previousId ) {
+    public Block(String data, Integer previousId, ArrayList<Transaction> transactions) {
         this.data = data;
         this.previousId = previousId;
         this.timeStamp = new Date().getTime();
         this.difficulty = 5;
         this.hash = calculateHash();
+        this.transactions = transactions;
         mineBlock();
     }
 
@@ -65,4 +68,5 @@ public class Block {
     private long timeStamp;
     private int nonce;
     private int difficulty;
+    ArrayList<Transaction> transactions;
 }
