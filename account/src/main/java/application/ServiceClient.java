@@ -57,14 +57,8 @@ public class ServiceClient {
 
 
     private String encodeTransaction(Serializable transaction) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream( baos );
-        oos.writeObject( transaction );
-        oos.close();
-        String transactionStr = Base64.getEncoder().encodeToString(baos.toByteArray());
-        transactionStr = transactionStr.replace('/', '$');
-        //return transactionStr.replace('+', '@');
-        return transactionStr;
+        String transactionStr = transaction.toString();
+        return transactionStr.replace('/', '$');
     }
 
 
@@ -100,9 +94,7 @@ public class ServiceClient {
     private String encodePublicKey(PublicKey publicKey) {
         Base64.Encoder encoder = Base64.getEncoder();
         String keyPub = encoder.encodeToString(publicKey.getEncoded());
-        String key = keyPub.replace('/', '$');
-        return key;
-        //return key.replace('+', '#');
+        return keyPub.replace('/', '$');
     }
 
     String connection() throws IOException {

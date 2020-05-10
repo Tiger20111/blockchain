@@ -6,14 +6,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 import transaction.Transaction;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
 import java.util.HashMap;
 
 @Component
@@ -21,6 +18,9 @@ public class ServiceServer {
     ServiceServer(){
         wallets = new HashMap<>();
         banks = new HashMap<>();
+        pendingTransaction = new HashMap<>();
+        finishedTransaction = new HashMap<>();
+        rejectedTransaction = new HashMap<>();
     }
 
     static {
@@ -40,20 +40,50 @@ public class ServiceServer {
     }
 
     String pushTransaction(String transactionStr) throws IOException, ClassNotFoundException {
-        Transaction transaction = decodeTransaction(transactionStr);
+        Transaction transaction = decodeTransaction( transactionStr );
+        System.out.println("Transaction: " + transactionStr + " was pushed");
         pendingTransaction.put(transaction.getSender(), transaction);
         return "transaction pushed";
     }
 
     private Transaction decodeTransaction(String transactionStr) throws IOException, ClassNotFoundException {
+        System.out.println("Start decode transaction: " + transactionStr);
         transactionStr = transactionStr.replace('$', '/');
-        transactionStr = transactionStr.replace('#', '+');
-        byte [] data = Base64.getDecoder().decode( transactionStr );
-        ObjectInputStream ois = new ObjectInputStream(
-                new ByteArrayInputStream(  data ) );
-        Transaction transaction  = (Transaction) ois.readObject();
-        ois.close();
-        return transaction;
+        String[] pairs = transactionStr.split("-");
+        int transactionId = 0;
+        String digitalSignature = "";
+        String sender = "";
+        String recipient = "";
+        double value = 0.0;
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=");
+            if (keyValue.length != 2) {
+                continue;
+            }
+            String key = keyValue[0];
+            String valueS = keyValue[1];
+
+            switch (key) {
+                case "transactionId":
+                    transactionId = Integer.parseInt(valueS);
+                    break;
+                case "digitalSignature":
+                    digitalSignature = valueS;
+                    break;
+                case "sender":
+                    sender = valueS;
+                    break;
+                case "recipient":
+                    recipient = valueS;
+                    break;
+                case "value":
+                    value = Double.parseDouble(valueS);
+                    break;
+                default:
+                    throw new RuntimeException("Error key: " + key);
+            }
+        }
+        return new Transaction(transactionId, sender, recipient, digitalSignature, value);
     }
 
     String getBankNames() {
