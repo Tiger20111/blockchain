@@ -39,6 +39,7 @@ public class ServiceServer {
 
     String miniBlock() {
         ArrayList<Transaction> validTransaction = new ArrayList<>();
+        ArrayList<Integer> invalidIdTransactions = new ArrayList<>();
         if (pendingTransaction.isEmpty()) {
             return "Nothing to mine";
         }
@@ -48,10 +49,14 @@ public class ServiceServer {
             if (valid) {
                 validTransaction.add(entry.getValue());
             } else {
-                pendingTransaction.remove(entry.getKey());
+                invalidIdTransactions.add(entry.getKey());
                 rejectedTransaction.put(entry.getKey(), entry.getValue());
             }
         }
+        for (Integer id : invalidIdTransactions) {
+            pendingTransaction.remove(id);
+        }
+
         SmartContract.executeTransaction(wallets, validTransaction);
 
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
