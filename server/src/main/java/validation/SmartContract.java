@@ -31,6 +31,10 @@ public class SmartContract {
             System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
             return false;
         }
+        if (0 > transaction.getValue()) {
+            System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid(balance)");
+            return false;
+        }
         System.out.println("Transaction with id: " + transaction.getTransactionId() + " is valid");
         return true;
     }
