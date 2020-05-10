@@ -2,7 +2,9 @@ package transaction;
 
 import encoder.Sha256;
 
-public class Transaction {
+import java.io.Serializable;
+
+public class Transaction implements Serializable {
     public Transaction(String from, String to, String digitalSignature, Double value) {
         this.sender = from;
         this.recipient = to;

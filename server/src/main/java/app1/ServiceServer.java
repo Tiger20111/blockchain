@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.HashMap;
 
 @Component
@@ -45,10 +46,12 @@ public class ServiceServer {
     }
 
     private Transaction decodeTransaction(String transactionStr) throws IOException, ClassNotFoundException {
-        byte[] b = transactionStr.getBytes();
-        ByteArrayInputStream bi = new ByteArrayInputStream(b);
-        ObjectInputStream si = new ObjectInputStream(bi);
-        return (Transaction) si.readObject();
+        byte [] data = Base64.getDecoder().decode( transactionStr );
+        ObjectInputStream ois = new ObjectInputStream(
+                new ByteArrayInputStream(  data ) );
+        Transaction transaction  = (Transaction) ois.readObject();
+        ois.close();
+        return transaction;
     }
 
     Double getBalance(String name) {

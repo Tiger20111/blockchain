@@ -56,12 +56,12 @@ public class ServiceClient {
         return "Complete";
     }
 
-    String encodeTransaction(Transaction transaction) throws IOException {
-        ByteArrayOutputStream bo = new ByteArrayOutputStream();
-        ObjectOutputStream so = new ObjectOutputStream(bo);
-        so.writeObject(transaction);
-        so.flush();
-        return bo.toString();
+    String encodeTransaction(Serializable transaction) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream( baos );
+        oos.writeObject( transaction );
+        oos.close();
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
 
 
