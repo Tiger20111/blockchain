@@ -17,6 +17,7 @@
   5. http://localhost:8082/account/balance/{name} - Вывести баланс пользователя
   6. http://localhost:8082/transaction/money_transfer/{from}/{to}/{amount} - Сделать перевод от пользователя {from} пользователю {to} на сумму {amount}
   7. http://localhost:8082/banks/names - вывести имена банков
+  8. http://localhost:8082/connection - проверить соединение с сервером
    
     Команды для банка:
   1. http://localhost:8083/bank/new/{name} - Создать новый аккаунт для банка

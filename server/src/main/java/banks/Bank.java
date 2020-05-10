@@ -29,6 +29,9 @@ public class Bank {
         }
     }
 
+    public String getName() {
+        return name;
+    }
 
     private String name;
     private PublicKey publicKey;

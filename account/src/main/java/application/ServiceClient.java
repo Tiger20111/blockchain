@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.PublicKey;
 import java.security.Security;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -19,31 +18,26 @@ import java.util.HashMap;
 public class ServiceClient {
     ServiceClient() {
     accounts = new HashMap<>();
-    banks = new ArrayList<>();
     }
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    String addAccount(String name) {
+    String addAccount(String name) throws IOException {
         if (accounts.containsKey(name)) {
             return "Account is already exist";
         }
+
         Account account = new Account(name);
+        String answer = postCreateAccount(name, account.getPublicKey());;
         accounts.put(name, account);
-        postCreateAccount(name, account.getPublicKey());
-        return "Account created";
+        return answer;
     }
 
-    private void postCreateAccount(String name, PublicKey publicKey) {
+    private String postCreateAccount(String name, PublicKey publicKey) throws IOException {
         String request = urlServer + "account/new/" + name + "/" + encodePublicKey(publicKey);
-
-        try {
-            getUrl(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return getUrl(request);
     }
 
     Integer getNumAccounts() {
@@ -53,29 +47,30 @@ public class ServiceClient {
     String transferMoney(String from, String to, Double amount) throws IOException {
         Transaction transaction = new Transaction(from, to, "", amount);
         String transactionStr = encodeTransaction(transaction);
-        return "Complete";
+        return postTransaction(transactionStr);
     }
 
-    String encodeTransaction(Serializable transaction) throws IOException {
+    private String postTransaction(String transaction) throws IOException {
+        String request = urlServer + "transaction/" + transaction;
+        return getUrl(request);
+    }
+
+
+    private String encodeTransaction(Serializable transaction) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream( baos );
         oos.writeObject( transaction );
         oos.close();
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
+        String transactionStr = Base64.getEncoder().encodeToString(baos.toByteArray());
+        transactionStr = transactionStr.replace('/', '$');
+        //return transactionStr.replace('+', '@');
+        return transactionStr;
     }
 
 
-    String getBankNames() {
-        StringBuilder names = new StringBuilder();
-        int num = 0;
-        for (String name : banks) {
-            if (num != 0) {
-                names.append(", ");
-            }
-            names.append(name);
-            num++;
-        }
-        return names.toString();
+    String getBankNames() throws IOException {
+        String request = urlServer + "bank/names";
+        return getUrl(request);
     }
 
     Double getBalance(String name) throws IOException {
@@ -105,13 +100,19 @@ public class ServiceClient {
     private String encodePublicKey(PublicKey publicKey) {
         Base64.Encoder encoder = Base64.getEncoder();
         String keyPub = encoder.encodeToString(publicKey.getEncoded());
-        return keyPub.replace('/', '$');
+        String key = keyPub.replace('/', '$');
+        return key;
+        //return key.replace('+', '#');
+    }
+
+    String connection() throws IOException {
+        String request = urlServer + "connection";
+        return getUrl(request);
     }
 
     private String getUrl(String url) throws IOException {
         StringBuffer response;
         try {
-
             URL obj = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
 
@@ -125,14 +126,12 @@ public class ServiceClient {
                 response.append(inputLine);
             }
             in.close();
-
         } catch (Exception e) {
-            throw new RuntimeException("wrong address: " + url);
+            throw new RuntimeException("wrong address: " + url + "\n" + e.toString());
         }
         return response.toString();
     }
 
     private HashMap<String, Account> accounts;
     private String urlServer;
-    private ArrayList<String> banks;
 }

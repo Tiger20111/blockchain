@@ -46,12 +46,27 @@ public class ServiceServer {
     }
 
     private Transaction decodeTransaction(String transactionStr) throws IOException, ClassNotFoundException {
+        transactionStr = transactionStr.replace('$', '/');
+        transactionStr = transactionStr.replace('#', '+');
         byte [] data = Base64.getDecoder().decode( transactionStr );
         ObjectInputStream ois = new ObjectInputStream(
                 new ByteArrayInputStream(  data ) );
         Transaction transaction  = (Transaction) ois.readObject();
         ois.close();
         return transaction;
+    }
+
+    String getBankNames() {
+        StringBuilder names = new StringBuilder();
+        int num = 0;
+        for (String name : banks.keySet()) {
+            if (num > 0) {
+                names.append(", ");
+            }
+            names.append(name);
+            num++;
+        }
+        return names.toString();
     }
 
     Double getBalance(String name) {

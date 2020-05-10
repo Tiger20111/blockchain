@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
@@ -28,6 +30,9 @@ public class ControllerClient {
     public String moneyTransfer(@PathVariable("from") String from,
                                 @PathVariable("to") String to,
                                 @PathVariable("amount") Double amount) throws Exception {
+        if (!setUrls) {
+            service.setUrlServer(urlServer);
+        }
         return service.transferMoney(from, to, amount);
     }
 
@@ -42,6 +47,14 @@ public class ControllerClient {
     @RequestMapping(value = "status", method = GET)
     public String status() {
         return "Work";
+    }
+
+    @RequestMapping(value = "connection", method = GET)
+    public String connection() throws IOException {
+        if (!setUrls) {
+            service.setUrlServer(urlServer);
+        }
+        return service.connection();
     }
 
     @RequestMapping(value = "accounts/names", method = GET)

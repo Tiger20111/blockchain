@@ -45,6 +45,16 @@ public class ControllerServer {
 
     }
 
+    @RequestMapping(value = "/connection", method = GET)
+    public String connection() throws Exception {
+        return "connected";
+    }
+
+    @RequestMapping(value = "/bank/names", method = GET)
+    public String getBankNames() throws Exception {
+        return service.getBankNames();
+    }
+
     @RequestMapping(value = "status", method = GET)
     public String status() {
         return "Work";
