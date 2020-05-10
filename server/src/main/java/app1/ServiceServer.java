@@ -64,6 +64,7 @@ public class ServiceServer {
         if (validTransactionBank != null && !validTransactionBank.isEmpty()) {
             SmartContract.executeTransactionBank(banks, wallets, validTransactionBank);
         }
+
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
         int previousId = 0;
         Block block = new Block(timeStamp, previousId, validTransaction);

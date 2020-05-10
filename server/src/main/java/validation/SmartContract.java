@@ -34,12 +34,26 @@ public class SmartContract {
     public static boolean validTransactionBank(HashMap<String, Bank> banks,
                                                HashMap<String, Wallet> wallets,
                                                Transaction transaction) {
+        if (!wallets.containsKey(transaction.getRecipient()) && !banks.containsKey(transaction.getSender())) {
+            System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
+            return false;
+        }
+        if (banks.get(transaction.getSender()).getBalance() < transaction.getValue()) {
+            System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
+            return false;
+        }
         return true;
     }
 
     public static boolean executeTransactionBank(HashMap<String, Bank> banks,
                                                  HashMap<String, Wallet> wallets,
-                                                 ArrayList<Transaction> transaction) {
+                                                 ArrayList<Transaction> validTransaction) {
+        for (Transaction transaction : validTransaction) {
+            Bank from = banks.get(transaction.getSender());
+            Wallet to = wallets.get(transaction.getRecipient());
+            from.writeOff(transaction.getValue());
+            to.replenishment(transaction.getValue());
+        }
         return true;
     }
 }

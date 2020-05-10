@@ -33,6 +33,14 @@ public class Bank {
         return name;
     }
 
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void writeOff(Double amount) {
+        this.balance -= amount;
+    }
+
     private String name;
     private PublicKey publicKey;
     private PrivateKey privateKey;

@@ -17,7 +17,7 @@ public class checkBlock {
         }
 
         String hashTarget = new String(new char[currentBlock.getDifficulty()]).replace('\0', '0');
-        if(!currentBlock.getHashNonce().substring( 0, currentBlock.getDifficulty()).equals(hashTarget)) {
+        if(!currentBlock.getHash().substring( 0, currentBlock.getDifficulty()).equals(hashTarget)) {
             System.out.println("#This block hasn't been mined");
             return false;
         }

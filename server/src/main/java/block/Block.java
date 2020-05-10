@@ -1,5 +1,6 @@
 package block;
 
+import block.mine.Utils;
 import encoder.Sha256;
 import transaction.Transaction;
 
@@ -14,8 +15,8 @@ public class Block {
         this.previousId = previousId;
         this.timeStamp = new Date().getTime();
         this.difficulty = 5;
-        this.hash = calculateHash();
         this.transactions = transactions;
+        this.hash = calculateHash();
         mineBlock();
     }
 
@@ -24,17 +25,21 @@ public class Block {
         return Sha256.getHash(
                 previousId +
                         Long.toString(timeStamp) +
-                        data
+                        data +
+                        id +
+                        nonce +
+                        transactions.size()
         );
     }
 
     public void mineBlock() {
-        hashNonce = hash;
-        String target = new String(new char[difficulty]).replace('\0', '0');
-        while(!hashNonce.substring( 0, difficulty).equals(target)) {
+        System.out.println("Start mine block");
+        String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
+        while(!hash.substring( 0, difficulty).equals(target)) {
             nonce ++;
-            hashNonce = calculateHash();
+            hash = calculateHash();
         }
+        System.out.println("Block Mined!!! : " + hash);
     }
 
     public Integer getDifficulty() {
@@ -52,17 +57,12 @@ public class Block {
         return data;
     }
 
-    public String getHashNonce() {
-        return hashNonce;
-    }
-
     public String getHash() {
         return hash;
     }
 
     private Integer id;
     private String hash;
-    private String hashNonce;
     private Integer previousId;
     private String data;
     private long timeStamp;
