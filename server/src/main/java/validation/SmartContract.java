@@ -9,6 +9,13 @@ import java.util.HashMap;
 
 public class SmartContract {
     public static boolean validTransactionUser(HashMap<String, Wallet> wallets, Transaction transaction) {
+
+        String hashTarget = new String(new char[transaction.getDifficulty()]).replace('\0', '0');
+        if(!transaction.getHash().substring( 0, transaction.getDifficulty()).equals(hashTarget)) {
+            System.out.println("This block hasn't been mined");
+            return false;
+        }
+
         if (!wallets.containsKey(transaction.getRecipient()) && !wallets.containsKey(transaction.getSender())) {
             System.out.println("Transaction with id: " + transaction.getTransactionId() + " is invalid");
             return false;
@@ -56,4 +63,5 @@ public class SmartContract {
         }
         return true;
     }
+
 }

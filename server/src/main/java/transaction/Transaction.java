@@ -39,6 +39,17 @@ public class Transaction implements Serializable {
         );
     }
 
+    public String calculateHashNonce(Integer nonceNew) {
+        return Sha256.getHash(
+                transactionId +
+                        sender +
+                        recipient +
+                        value +
+                        digitalSignature +
+                        nonceNew
+        );
+    }
+
     public Double getValue() {
         return value;
     }
@@ -57,6 +68,18 @@ public class Transaction implements Serializable {
 
     public Integer getTransactionId() {
         return transactionId;
+    }
+
+    public Integer getNonce() {
+        return nonce;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public Integer getDifficulty() {
+        return difficulty;
     }
 
     public void mineTransaction() {

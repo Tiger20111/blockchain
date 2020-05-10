@@ -18,16 +18,6 @@ public class Transaction implements Serializable {
         mineTransaction();
     }
 
-    public Transaction(Integer transactionId, String from, String to, String digitalSignature, Double value, String hash, Integer nonce) {
-        this.transactionId = transactionId;
-        this.sender = from;
-        this.recipient = to;
-        this.value = value;
-        this.digitalSignature = digitalSignature;
-        this.hash = hash;
-        this.nonce = nonce;
-    }
-
     private String calculateHash() {
         return Sha256.getHash(
                 transactionId +
@@ -37,26 +27,6 @@ public class Transaction implements Serializable {
                         digitalSignature +
                         nonce
         );
-    }
-
-    public Double getValue() {
-        return value;
-    }
-
-    public String getDigitalSignature() {
-        return digitalSignature;
-    }
-
-    public String getRecipient() {
-        return recipient;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public Integer getTransactionId() {
-        return transactionId;
     }
 
     public void mineTransaction() {
